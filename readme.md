@@ -12,14 +12,14 @@ Assumptions: Rebate values and state information are in two separate tables with
 
 >Code  
 
-'''
+```sql
 SELECT p.state, AVG(c.rebate_value) FROM campaign c  
 JOIN pricing p ON c.brand = p.brand AND c.week = p.week  
 WHERE p.state <> 0  
     AND state IS NOT NULL  
 GROUP BY p.state  
 HAVING AVG(c.rebate_value) < 0.5;  
-'''
+```
 
 >Output
 
@@ -61,7 +61,7 @@ Assumptions: Some versions of SQL do not support median or percentile functions.
 
 >Code
 
-'''
+```sql
 SELECT city, state, PERCENTILE(avg_retail_price, 0.5) AS median_price  
 FROM pricing  
 WHERE city <> 0  
@@ -69,7 +69,7 @@ WHERE city <> 0
 GROUP BY city, state  
 ORDER BY AVG(avg_retail_price) DESC  
 LIMIT 1 OFFSET 3;  
-'''
+```
 
 >Output
 
@@ -83,7 +83,7 @@ Assumptions: I assume "have more than 10,000 engagements" here means in this dat
 
 >Code
 
-'''
+```sql
 SELECT DISTINCT brand FROM campaign  
 WHERE brand NOT IN (  
     SELECT DISTINCT brand FROM campaign  
@@ -94,7 +94,7 @@ AND brand IN (
     GROUP BY brand  
     HAVING SUM(engagements) > 10000  
     );  
-'''
+```
 
 >Output
 
@@ -111,7 +111,7 @@ Assumptions: Though there are a few ways to interpret "relative to the past for 
 
 >Code
 
-'''
+```sql
 SELECT week,  
     tq AS total_quantity,  
     CAST(tq AS FLOAT)  
@@ -124,7 +124,7 @@ FROM (
     WHERE week BETWEEN '2018-09-03' AND '2018-12-31'  
     GROUP BY week)  
 LIMIT -1 OFFSET 4;  
-'''
+```
 
 >Output
 
