@@ -6,112 +6,103 @@ This coding exercise was completed by Nicholas Kopystynsky. Questions and data a
 
 Some questions could be interpreted with some degree of flexibility, even if the code is very specific. As such I have included assumptions.
 
-#### 1. 
->Provide the state and average rebate_value for each state with an average rebate_value less than $0.50.
+#### 1. Provide the state and average rebate_value for each state with an average rebate_value less than $0.50.
 
 Assumptions: Rebate values and state information are in two separate tables with no explicit way to connect the data. I assumed connecting brand and week between the two tables could connect states to rebate values correctly. Campaigns that span multiple weeks or span multiple cities were counted multiple times and it was assumed that is acceptable.
 
 >Code  
 
-'''sql
-SELECT p.state, AVG(c.rebate_value) FROM campaign c
-JOIN pricing p ON c.brand = p.brand AND c.week = p.week
-WHERE p.state <> 0 
-    AND state IS NOT NULL
-GROUP BY p.state
-HAVING AVG(c.rebate_value) < 0.5;
+'''
+SELECT p.state, AVG(c.rebate_value) FROM campaign c  
+JOIN pricing p ON c.brand = p.brand AND c.week = p.week  
+WHERE p.state <> 0  
+    AND state IS NOT NULL  
+GROUP BY p.state  
+HAVING AVG(c.rebate_value) < 0.5;  
 '''
 
 >Output
 
-'''
-state  AVG(c.rebate_value)
------  -------------------
-AK     0.45787037037037   
-AL     0.452822966507177  
-AR     0.485393586005831  
-AZ     0.36613870246085   
-CO     0.36406425102727   
-CT     0.383367875647668  
-GA     0.450027142303219  
-IA     0.495937142857143  
-ID     0.450104529616725  
-IL     0.47670928667564   
-KS     0.498130841121495  
-MD     0.487905660377359  
-MN     0.377707607770299  
-MO     0.487270942867154  
-MS     0.283555555555556  
-MT     0.394512635379061  
-ND     0.456708208955224  
-NE     0.480843479107819  
-NJ     0.331909699435621  
-NM     0.404751552795031  
-NY     0.394574683544302  
-SD     0.333920118343195  
-TN     0.49073717948718   
-TX     0.418761974944729  
-UT     0.408271428571429  
-VT     0.4255             
-WA     0.48418085106383   
-WI     0.475114953707326  
-WY     0.437444933920705 
-'''
+|state | AVG(c.rebate_value)|
+|----- | -------------------|
+|AK  |   0.45787037037037   |
+|AL |    0.452822966507177  |
+|AR|     0.485393586005831  |
+|AZ     |0.36613870246085   |
+|CO    | 0.36406425102727   |
+|CT   |  0.383367875647668  |
+|GA  |   0.450027142303219  |
+|IA |    0.495937142857143  |
+|ID|     0.450104529616725  |
+|IL     |0.47670928667564   |
+|KS    | 0.498130841121495  |
+|MD   |  0.487905660377359  |
+|MN  |   0.377707607770299  |
+|MO |    0.487270942867154  |
+|MS|     0.283555555555556  |
+|MT     |0.394512635379061  |
+|ND    | 0.456708208955224  |
+|NE   |  0.480843479107819  |
+|NJ  |   0.331909699435621  |
+|NM |    0.404751552795031  |
+|NY    | 0.394574683544302  |
+|SD   |  0.333920118343195  |
+|TN  |   0.49073717948718   |
+|TX |    0.418761974944729  |
+|UT    | 0.408271428571429  |
+|VT   |  0.4255             |
+|WA  |   0.48418085106383   |
+|WI |    0.475114953707326  |
+|WY |    0.437444933920705 |
 
-#### 2.
->Provide the city with the fourth highest median avg_retail_price without using the rank function.
+#### 2. Provide the city with the fourth highest median avg_retail_price without using the rank function.
 
 Assumptions: Some versions of SQL do not support median or percentile functions. Assuming yours does, here is the code.
 
 >Code
 
-'''sql
-SELECT city, state, PERCENTILE(avg_retail_price, 0.5) AS median_price
-FROM pricing
-WHERE city <> 0 
-    AND city IS NOT NULL
-GROUP BY city, state 
-ORDER BY AVG(avg_retail_price) DESC
-LIMIT 1 OFFSET 3;
+'''
+SELECT city, state, PERCENTILE(avg_retail_price, 0.5) AS median_price  
+FROM pricing  
+WHERE city <> 0  
+    AND city IS NOT NULL  
+GROUP BY city, state  
+ORDER BY AVG(avg_retail_price) DESC  
+LIMIT 1 OFFSET 3;  
 '''
 
 >Output
 
-'''
-city      state  median_price
-------    -----  ------------
-Mannford  OK     11.96 
-'''
+|city    |  state | median_price|
+|------ |   ----- | ------------|
+|Mannford | OK  |   11.96 |
 
-#### 3. 
->Provide a list of brands that do not have a campaign running between weeks ‘2018-03-19’ and ‘2018-04-23’ and that also have more than 10,000 engagements.
+#### 3. Provide a list of brands that do not have a campaign running between weeks ‘2018-03-19’ and ‘2018-04-23’ and that also have more than 10,000 engagements.
 
 Assumptions: I assume "have more than 10,000 engagements" here means in this dataset in total. If it were something like "in a single campaign or week" that would be a different question. I also assume it did not mean having 10,000+ engagements during the dates provided because any company that does not run a campaign during that time, by definition, will not have any engagements on Ibotta.
 
 >Code
 
-'''sql
-SELECT DISTINCT brand FROM campaign
-WHERE brand NOT IN (
-    SELECT DISTINCT brand FROM campaign
-    WHERE week BETWEEN '2018-03-19' AND '2018-04-23'
-    )
-AND brand IN (
-    SELECT brand FROM campaign
-    GROUP BY brand
-    HAVING SUM(engagements) > 10000
-    );
+'''
+SELECT DISTINCT brand FROM campaign  
+WHERE brand NOT IN (  
+    SELECT DISTINCT brand FROM campaign  
+    WHERE week BETWEEN '2018-03-19' AND '2018-04-23'  
+    )  
+AND brand IN (  
+    SELECT brand FROM campaign  
+    GROUP BY brand  
+    HAVING SUM(engagements) > 10000  
+    );  
 '''
 
 >Output
 
-'''
-brand
-------- -
-Brand 17
-Brand 14
+|brand|
+|---|
+|Brand 17|
+|Brand 14|
 
-'''
 
 #### 4. 
 >For the months of October 2018 through December 2018, provide the sum of total_quantity on each week and what percent that total is relative to the past four weeks.
@@ -120,41 +111,39 @@ Assumptions: Though there are a few ways to interpret "relative to the past for 
 
 >Code
 
-'''sql
-SELECT week, 
-    tq AS total_quantity, 
-    CAST(tq AS FLOAT) 
-        / (LAG(tq, 1) OVER (ORDER BY week)
-        + LAG(tq, 2) OVER (ORDER BY week)
-        + LAG(tq, 3) OVER (ORDER BY week)
-        + LAG(tq, 4) OVER (ORDER BY week)) * 100 AS '4 week percentage'
-FROM (
-    SELECT week, SUM(total_quantity) AS tq FROM market
-    WHERE week BETWEEN '2018-09-03' AND '2018-12-31'
-    GROUP BY week)
-LIMIT -1 OFFSET 4;
+'''
+SELECT week,  
+    tq AS total_quantity,  
+    CAST(tq AS FLOAT)  
+        / (LAG(tq, 1) OVER (ORDER BY week)  
+        + LAG(tq, 2) OVER (ORDER BY week)  
+        + LAG(tq, 3) OVER (ORDER BY week)  
+        + LAG(tq, 4) OVER (ORDER BY week)) * 100 AS '4 week percentage'  
+FROM (  
+    SELECT week, SUM(total_quantity) AS tq FROM market  
+    WHERE week BETWEEN '2018-09-03' AND '2018-12-31'  
+    GROUP BY week)  
+LIMIT -1 OFFSET 4;  
 '''
 
 >Output
 
-'''
-week        total_quantity  4 week percentage
-----------  --------------  -----------------
-2018-10-01  12554           25.8706672711536 
-2018-10-08  11760           24.2494226327945 
-2018-10-15  11806           24.6749989549806 
-2018-10-22  12104           25.3912313824208 
-2018-10-29  11668           24.1954213669542 
-2018-11-05  12546           26.5030208289324 
-2018-11-12  10168           21.1287507272878 
-2018-11-19  7192            15.4713246999096 
-2018-11-26  15570           37.45129167268   
-2018-12-03  12714           27.9576040109068 
-2018-12-10  11480           25.1511699237578 
-2018-12-17  10972           23.3665559246955 
-2018-12-24  8776            17.2973825291706 
-2018-12-31  13726           31.236630103318 
-'''
+|week | total_quantity | 4 week percentage|
+|---|---|---|
+|2018-10-01 | 12554       |    25.8706672711536|
+|2018-10-08 | 11760       |    24.2494226327945 
+|2018-10-15 | 11806       |    24.6749989549806 
+|2018-10-22 | 12104      |     25.3912313824208 
+|2018-10-29 | 11668     |      24.1954213669542 
+|2018-11-05 | 12546    |       26.5030208289324 
+|2018-11-12 | 10168   |        21.1287507272878 
+|2018-11-19 | 7192    |        15.4713246999096 
+|2018-11-26 | 15570  |         37.45129167268   
+|2018-12-03 | 12714 |          27.9576040109068 
+|2018-12-10 | 11480     |      25.1511699237578 
+|2018-12-17 | 10972    |       23.3665559246955 
+|2018-12-24 | 8776    |        17.2973825291706 
+|2018-12-31 | 13726  |         31.236630103318 
 
 ## Part 2 - Python
 
