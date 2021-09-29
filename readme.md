@@ -153,21 +153,21 @@ No major problems encountered on loading the data from .csv files.
 
 ### Missing data analysis
 
-The primary data quality concern is missing data. Though not the only thing missing, item price and quantity were the biggest pieces of missing data. Only about 1,000 in 22,000 receipts had full price and quantity information, about 5%. Not very high. This tells us that there is a lot of information not being captured by the OCR system that scans the receipts. This is potentially a huge loss, depending on how important this information is. With this level of missing data it is unwise to try imputing something. If it had to be done, most receipt items would probably have a quantity of one. Some prices could be guessed by echoing item prices on other receipts (although 45% of products have no price on any receipt), some other database, a web scraped online price, or even imputed from items in the same product category. But again these could vary wildly (and as you can see below some prices are scanned incorrectly).
+The primary data quality concern is missing data. Though not the only thing missing, item price and quantity were the biggest pieces of missing data. Only about 1,000 in 22,000 receipts had full price and quantity information, about 5%. Not very high. This tells us that there is a lot of information not being captured by the OCR system that scans the receipts. This is potentially a huge loss, depending on how important this information is. With this level of missing data it is unwise to try imputing something. If it had to be done, most receipt items would probably have a quantity of one. Some prices could be guessed by echoing item prices on other receipts (although 45% of products have no price on any receipt), some other database, a web scraped online price, or even imputed from items in the same product category. But again these could vary wildly (and as discussed below some prices are scanned incorrectly).
 
 When we take the receipts with no missing information and try to reconstruct the total price, only 280 receipts matched exactly. Even if you give a 20% price tolerance to allow for possible taxes, discounts, surcharges, etc. you only have 656 receipts that match. That's 3% of the total receipts. Again not very high.
 
-So even among the receipts we consider "complete," we have evidence that at least half are still missing price related information. It could be an OCR error like misreading numbers or missing items on receipts. Either way it is worth investigating some of the receipts that did and did not have price estimate matches to tease out systemic errors.
+So even among the receipts we consider "complete," we have evidence that maybe half are still missing price related information. It could be an OCR scanning error like misreading numbers or missing items. Either way it is worth investigating some of the receipts that did and did not have price estimate matches to tease out systemic errors.
 
-Ultimately the missing item data is potentially a big avenue that can't be explored, and it is not something that can really be reasonably fixed at this level.
+Ultimately the missing price and quantity data is potentially a big avenue that can't be explored, and it is not something that can really be reasonably fixed at this level. Quantity especially is important in campaign performance indicators (did the campaign make people buy more yogurt?), as well as for end users (if they bought two yogurts, they'll be wanting the rebates for both yogurts).
 
 ### Price analysis
 
-The highest price for a single item was about $71 billion dollars. There were 72 additional items that were over $100,000. Either Jeff Bezos is submitting receipts or the wrong numbers are sometimes mistaken for an item price.
+The highest price for a single item was about $71 billion dollars and there were 72 additional items that were over $100,000 each. So either Jeff Bezos is scanning receipts or the data is wrong. 
 
-There are also products that have different prices on different receipts. This in of itself is not surprising, discounts happen all the time after all. But there are some clear outliers, mostly linked to the incorrect price listings.
+It's very likely the wrong number is being mistaken for a price here and there. There are also products that have different prices on different receipts. This in of itself is not surprising, discounts happen all the time after all, but there are some clear outliers.
 
-These can both be solved by removing errors, but it's difficult to say where the line is. Until the receipt scans are improved we will have to fix this problem on the programming level, such as removing outliers. But where is the line? Do we remove anything priced above $10,000? $1,000? $500? There may not be a correct answer and you have to make a judgment call that balances accuracy and inevitably lost data.
+These can both be solved by removing errors, but until the receipt scans are improved we will have to fix this problem on the programming level. But where do we draw the line when we're defining a bad price? Do we remove anything priced above $10,000? $1,000? $500? There may not be a correct answer and you have to make a judgment call based on what's good for the business. A lower threshold means a higher percentage of correct prices but more "good data" that unfortunately gets thrown out.
 
 ### Misc analysis
 
